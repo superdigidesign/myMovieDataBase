@@ -3,11 +3,12 @@ from django.shortcuts import render
 from django.views.generic import (
 	ListView, DetailView,
 )
-from core.models import Movie
+from core.models import Movie, Person
 
 class MovieDetail(DetailView):
 	queryset = (
-		Movie.objects.all_with_related_persons())
+		Movie.objects
+			.all_with_related_persons())
 
 class MovieList(ListView):
 	model = Movie
