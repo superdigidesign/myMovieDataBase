@@ -31,7 +31,7 @@ class MovieDetail(DetailView):
 					reverse(
 						'core:CreateVote',
 						kwargs={
-							'movie_id': self.object.id}					}
+							'movie_id': self.object.id}
 					)
 				)
 			vote_form = VoteForm(instance=vote)
