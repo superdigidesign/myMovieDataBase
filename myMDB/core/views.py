@@ -54,6 +54,7 @@ class MovieList(ListView):
 class PersonDetail(DetailView):
 	queryset = Person.objects.all_with_prefetch_movies()
 
+<<<<<<< HEAD
 
 class CreateVote(LoginRequiredMixin, CreateView):
 	form_class = VoteForm
@@ -110,3 +111,28 @@ class UpdateVote(LoginRequiredMixin, UpdateView):
 			kwargs={'pk': movie_id})
 		return redirect(
 			to=movie_detail_url)
+=======
+class VoteForm(forms.ModelForm):
+
+	user = forms.ModelChoiceField(
+		widget=forms.HiddenInput,
+		queryset=get_user_model(),
+			objects.all(),
+		disabled=True,
+	)
+	movie = forms.ModelChoiceField(
+		widget=forms.HiddenInput,
+		queryset=Movie.objects.all(),
+		disabled=True,
+	)
+	value = forms.ChoiceField(
+		label='Vote',
+		widget=forms.RadioSelect,
+		choices=Vote.VALUE_CHOICES,
+	)
+
+	class Meta:
+		model = Vote
+		fields = (
+			'value', 'user', 'movie')
+>>>>>>> 5dbf4c8f0604156cdadd721673c711fc4749ef3b
