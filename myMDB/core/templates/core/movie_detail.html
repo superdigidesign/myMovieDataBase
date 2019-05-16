@@ -12,7 +12,17 @@
 {% endblock %}
 
 {% block sidebar %}
-	{# rating div omitted #}
+	<div>
+		This movie is rated:
+		<span class ="badge badge-primary">
+			{{ object.get_rating_display }}
+		</span>
+	</div>
+	<div>
+		<h2>
+			Score: {{ object.score|default_if_none:"TBD" }}
+		</h2>
+	</div>
 	<div>
 		{% if vote_form %}
 			<form method="post" action="{{ vote_form_url }}">
