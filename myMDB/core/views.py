@@ -49,6 +49,7 @@ class MovieDetail(DetailView):
 
 class MovieList(ListView):
 	model = Movie
+	paginate_by = 10
 
 
 class PersonDetail(DetailView):
