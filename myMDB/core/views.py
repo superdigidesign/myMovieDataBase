@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from django import forms
-from core.forms import VoteForm
+from core.forms import VoteForm, MovieImageForm
 from core.models import Movie, Person, Vote
 
 
@@ -21,6 +21,7 @@ class MovieDetail(DetailView):
 
 	def get_context_data(self, **kwargs):
 		ctx = super().get_context_data(**kwargs)
+		ctx['image_form'] = self.movie_image_form()
 		if self.request.user.is_authenticated:
 			vote = Vote.objects.get_vote_or_unsaved_blank_vote(
 				movie=self.object,
@@ -45,6 +46,11 @@ class MovieDetail(DetailView):
 			ctx['vote_form_url'] = \
 				vote_form_url
 		return ctx
+
+	def movie_image_form(self):
+		if self.request.user.is_authenticated:
+			return MovieImageForm()
+		return None
 
 
 class MovieList(ListView):
@@ -112,6 +118,7 @@ class UpdateVote(LoginRequiredMixin, UpdateView):
 		return redirect(
 			to=movie_detail_url)
 
+
 class VoteForm(forms.ModelForm):
 
 	user = forms.ModelChoiceField(
@@ -134,3 +141,29 @@ class VoteForm(forms.ModelForm):
 		model = Vote
 		fields = (
 			'value', 'user', 'movie')
+
+
+class MovieImageUpload(LoginRequiredMixin, CreateView):
+	form_class = MovieImageForm
+
+	def get_initial(self):
+		initial = super().get_initial()
+		initial['user'] = self.request.user.id
+		initial['movie'] = self.kwargs['movie_id']
+		return initial
+
+	def render_to_response(self, context, **response_kwargs):
+		movie_id = self.kwargs['movie_id']
+		movie_detail_url = reverse(
+			'core:MovieDetail',
+			kwargs={'pk': movie_id})
+		return redirect(
+			to=movie_detail_url)
+
+	def get_success_url(self):
+		movie_id = self.kwargs['movie_id']
+		movie_detail_url = reverse(
+			'core:MovieDetail',
+			kwargs={'pk': movie_id})
+		return movie_detail_url
+		

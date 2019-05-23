@@ -2,7 +2,24 @@ from django import forms
 from django.contrib.auth import \
     get_user_model
 
-from core.models import Vote, Movie
+from core.models import Vote, Movie, MovieImage
+
+
+class MovieImageForm(forms.ModelForm):
+    movie = forms.ModelChoiceField(
+        widget=forms.HiddenInput,
+        queryset=Movie.objects.all(),
+        disabled=True
+    )
+    user = forms.ModelChoiceField(
+        widget=forms.HiddenInput,
+        queryset=get_user_model().objects.all(),
+        disabled=True
+    )
+
+    class Meta:
+        model = MovieImage
+        fields = ('image', 'user', 'movie')
 
 
 class VoteForm(forms.ModelForm):
