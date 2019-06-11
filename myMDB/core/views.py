@@ -14,6 +14,8 @@ from django.urls import reverse
 from django import forms
 from core.forms import VoteForm, MovieImageForm
 from core.models import Movie, Person, Vote
+from core.mixins import VaryCacheOnCookieMixin
+from django.core.cache import cache
 
 
 class MovieDetail(DetailView):
@@ -53,9 +55,11 @@ class MovieDetail(DetailView):
 		return None
 
 
-class MovieList(ListView):
+class MovieList(VaryCacheOnCookieMixin, ListView):
 	model = Movie
 	paginate_by = 10
+
+	#may need to include get_context_data() here
 
 
 class PersonDetail(DetailView):
@@ -170,6 +174,17 @@ class MovieImageUpload(LoginRequiredMixin, CreateView):
 
 class TopMovies(ListView):
 	template_name = 'core/top_movies_list.html'
-	queryset = Movie.objects.top_movies(
-		limit=10)
+	
+	def get_queryset(self):
+		limit = 10
+		key = 'top_movies_%s' % limit
+		cached_qs = cache.get(key)
+		if cached_qs:
+			same_django = cached_qs._django_version == django.get_version()
+			if same_django:
+				return cached_qs
+		qs = Movie.object.top_movies(
+			limit=limit)
+		cache.set(key, qs)
+		return qs
 		

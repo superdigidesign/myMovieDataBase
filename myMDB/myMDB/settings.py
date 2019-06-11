@@ -131,3 +131,13 @@ LOGIN_URL = 'user:login'
 
 MEDIA_URL = '/uploaded/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media_root')
+
+CACHES = {
+    'default': {
+    'BACKEND': 'django.core.cache.backends.locmem.locMemCache',
+    'LOCATION': 'default-locmemcache',
+    'TIMEOUT': 5, #5 seconds
+    }
+}
+
+CSRF_USE_SESSIONS = True
