@@ -1,22 +1,31 @@
+import logging
+
 from django.shortcuts import render
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import (
+		LoginRequiredMixin)
 from django.views.generic import (
 	ListView, DetailView, CreateView, UpdateView,
 )
-from django.contrib.auth.mixins import (
-		LoginRequiredMixin)
-from django.core.exceptions import (
-	PermissionDenied)
+
+from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 
 from django import forms
 from core.forms import VoteForm, MovieImageForm
 from core.models import Movie, Person, Vote
-from core.mixins import VaryCacheOnCookieMixin
+from core.mixins import VaryCacheOnCookieMixin 
 from django.core.cache import cache
 
+
+logger = logging.getLogger(__name__)
 
 class MovieDetail(DetailView):
 	queryset = (Movie.objects.all_with_related_persons_and_score())
@@ -59,7 +68,13 @@ class MovieList(VaryCacheOnCookieMixin, ListView):
 	model = Movie
 	paginate_by = 10
 
-	#may need to include get_context_data() here
+	def get_context_data(self, **kwargs):
+		ctx = super(MovieList, self).get_context_data(**kwargs)
+		page = ctx['page_obj']
+		pagintor = ctx['pagintor']
+		ctx['page_is_first'] = (page.number == 1)
+		ctx['page_is_last'] = (page.number == paginator.num_pages)
+		return ctx
 
 
 class PersonDetail(DetailView):
@@ -121,30 +136,6 @@ class UpdateVote(LoginRequiredMixin, UpdateView):
 			kwargs={'pk': movie_id})
 		return redirect(
 			to=movie_detail_url)
-
-
-class VoteForm(forms.ModelForm):
-
-	user = forms.ModelChoiceField(
-		widget=forms.HiddenInput,
-		queryset=get_user_model().objects.all(),
-		disabled=True,
-	)
-	movie = forms.ModelChoiceField(
-		widget=forms.HiddenInput,
-		queryset=Movie.objects.all(),
-		disabled=True,
-	)
-	value = forms.ChoiceField(
-		label='Vote',
-		widget=forms.RadioSelect,
-		choices=Vote.VALUE_CHOICES,
-	)
-
-	class Meta:
-		model = Vote
-		fields = (
-			'value', 'user', 'movie')
 
 
 class MovieImageUpload(LoginRequiredMixin, CreateView):

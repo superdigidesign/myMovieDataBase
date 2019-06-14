@@ -16,8 +16,20 @@
 			<li class="list-inline-item">
 				<img src="{{ i.image.url }}">
 			</li>
+		{% endfor %}
 	</ul>
 	<p>Directed by {{ object.director }}</p>
+	<p>Written by {{ object.writers.all|unordered_list }}</p>
+	<h2>Actors</h2>
+	<ul>
+		{% for credit in object.role_set.all %}
+			<li>
+				<a href="{% url 'core:PersonDetail' pk=credit.person.id %}">
+					{{ credit.person }}: {{ credit.billing }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
 {% endblock %}
 
 {% block sidebar %}
@@ -30,8 +42,9 @@
 	{% if image_form %}
 		<div>
 			<h2>Upload New Image</h2>
-			<form method="post" enctype="multipart/form-data" 
-			action="{% url 'core:MovieImageUpload' movie_id=object.id %}">
+			<form method="post" 
+				  enctype="multipart/form-data" 
+				  action="{% url 'core:MovieImageUpload' movie_id=object.id %}">
 				{% csrf_token %}
 				{{ image_form.as_p }}
 				<p>
@@ -49,7 +62,9 @@
 	</div>
 	<div>
 		{% if vote_form %}
-			<form method="post" action="{{ vote_form_url }}">
+			<form 
+				method="post" 
+				action="{{ vote_form_url }}">
 				{% csrf_token %}
 				{{ vote_form.as_p }}
 				<button class="btn btn-primary">

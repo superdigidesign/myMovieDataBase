@@ -23,4 +23,7 @@ urlpatterns = [
 	path('movie/<int:movie_id>/vote/<int:pk>',
 		views.UpdateVote.as_view(),
 		name='UpdateVote'),
+	path('person/<int:pk>',
+		views.PersonDetail.as_view(),
+		name='PersonDetail'),
 ]

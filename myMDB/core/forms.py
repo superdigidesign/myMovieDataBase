@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth import \
     get_user_model
 
-from core.models import Vote, Movie, MovieImage
+from core.models import Vote, Movie, \
+    MovieImage
 
 
 class MovieImageForm(forms.ModelForm):

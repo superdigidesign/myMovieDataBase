@@ -173,8 +173,8 @@ class Vote(models.Model):
 	UP = 1
 	DOWN = -1
 	VALUE_CHOICES = (
-		(UP, "\U0001f44d"),
-		(DOWN, "\U0001f44e"),
+		(UP, "👍",),
+		(DOWN, "👎",),
 		)
 
 	value = models.SmallIntegerField(
@@ -196,3 +196,4 @@ class Vote(models.Model):
 
 	class Meta:
 		unique_together = ('user', 'movie')
+		

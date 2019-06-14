@@ -15,8 +15,18 @@
 			<a href="{% url 'core:MovieDetail' role.movie.id %}">
 				{{ role.movie }}
 			</a>:
-			{{ role.name }}
+			{{ role.billing }}
 		</li>
+		{% endfor %}
+	</ul>
+	<h2>Writer</h2>
+	<ul>
+		{% fot nivie in object.writing_credits.all %}
+			<li>
+				<a href="{% url 'core:MovieDetail' movie.id %}">
+					{{ movie }}
+				</a>
+			</li>
 		{% endfor %}
 	</ul>
 	<h2>Director</h2>
