@@ -21,7 +21,7 @@ from django.views.decorators.vary import vary_on_cookie
 from django import forms
 from core.forms import VoteForm, MovieImageForm
 from core.models import Movie, Person, Vote
-from core.mixins import VaryCacheOnCookieMixin 
+from core.mixins import CachePageVaryOnCookieMixin 
 from django.core.cache import cache
 
 
@@ -64,14 +64,14 @@ class MovieDetail(DetailView):
 		return None
 
 
-class MovieList(VaryCacheOnCookieMixin, ListView):
+class MovieList(CachePageVaryOnCookieMixin, ListView):
 	model = Movie
 	paginate_by = 10
 
 	def get_context_data(self, **kwargs):
 		ctx = super(MovieList, self).get_context_data(**kwargs)
 		page = ctx['page_obj']
-		pagintor = ctx['pagintor']
+		paginator = ctx['paginator']
 		ctx['page_is_first'] = (page.number == 1)
 		ctx['page_is_last'] = (page.number == paginator.num_pages)
 		return ctx
