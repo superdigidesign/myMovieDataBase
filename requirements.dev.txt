@@ -1,7 +1,7 @@
 --pre django
 
-Pillow<4.4.0
+Pillow==6.0.0
 
 python-memcached==1.58
 
-django-debug-toolbar==1.8
+django-debug-toolbar==1.11
