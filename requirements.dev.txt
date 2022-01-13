@@ -1,6 +1,6 @@
 --pre django
 
-Pillow==6.0.0
+Pillow==9.0.0
 
 python-memcached==1.58
 
